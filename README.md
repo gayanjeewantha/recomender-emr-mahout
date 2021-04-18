@@ -2,26 +2,33 @@
 This repository contains all the scipts to run a recommeder with apache mahout and redis on Amazon Elastic Map Reduce by following the below project https://aws.amazon.com/blogs/big-data/building-a-recommender-with-apache-mahout-on-amazon-elastic-mapreduce-emr/
 
 **Stpes to build recommender**
-1.Sign up for an AWS account.
-2.Configure the elastic-mapreduce ruby client.
-3.Start up an EMR cluster (note the pricing and make sure to shut the cluster down afterward).
+1.Sign up for an AWS account.  
+2.Configure the elastic-mapreduce ruby client.  
+3.3.Start up an EMR cluster (note the pricing and make sure to shut the cluster down afterward).
 
-4.Get the MovieLens data
-5.wget http://files.grouplens.org/datasets/movielens/ml-1m.zip
+4.Get the MovieLens data.  
+```wget http://files.grouplens.org/datasets/movielens/ml-1m.zip  
 unzip ml-1m.zip
+```
 
-Convert ratings.dat, trade “::” for “,”, and take only the first three columns:
-cat ml-1m/ratings.dat | sed 's/::/,/g' | cut -f1-3 -d, > ratings.csv
+Convert ratings.dat, trade “::” for “,”, and take only the first three columns:  
+```cat ml-1m/ratings.dat | sed 's/::/,/g' | cut -f1-3 -d, > ratings.csv
+```
 
 Put ratings file into HDFS:
+```
 hadoop fs -put ratings.csv /ratings.csv
+```
 
 5.Run the recommender job:
-mahout recommenditembased --input /ratings.csv --output recommendations --numRecommendations 10 --outputPathForSimilarityMatrix similarity-matrix --similarityClassname SIMILARITY_COSINE
 
-6.Look for the results in the part-files containing the recommendations:
-hadoop fs -ls recommendations
+```mahout recommenditembased --input /ratings.csv --output recommendations --numRecommendations 10 --outputPathForSimilarityMatrix similarity-matrix --similarityClassname SIMILARITY_COSINE
+```
+
+6.Look for the results in the part-files containing the recommendations:  
+```hadoop fs -ls recommendations
 hadoop fs -cat recommendations/part-r-00000 | head
+```
 
 You should see a lookup file that looks something like this (your recommendations will be different since they are all 5.0-valued and we are only picking ten):
 
